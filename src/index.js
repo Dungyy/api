@@ -23,9 +23,19 @@ app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 
+// Check if MONGO_URI is set in .env
+if (!process.env.MONGO_URI) {
+  logger.error('MongoDB URI is not set in the .env file');
+  process.exit(1); // Exit the process with an error code
+}
+
+// Connect to MongoDB
 mongoose
-  .connect(MONGO_URI)
+  .connect(process.env.MONGO_URI)
   .then(() =>
-    app.listen(PORT, () => logger.info(`⚡ Server running on port ${PORT} ⚡`))
+    app.listen(process.env.PORT, () => logger.info(`⚡ Server running on port ${process.env.PORT} ⚡`))
   )
-  .catch((err) => logger.error(err));
+  .catch((err) => {
+    logger.error(`Error connecting to MongoDB: ${err}`);
+    process.exit(1); // Exit the process with an error code
+  });
