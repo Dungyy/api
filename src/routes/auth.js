@@ -5,11 +5,14 @@ import multer from "multer";
 import User from "../models/User.js";
 import { JWT_SECRET } from "../global.js";
 import logger from "../logger.js";
+import { auth } from "../middleware/auth.js";
+import ServiceRequest from "../models/ServiceRequest.js";
 
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// Register route
 router.post("/register", async (req, res) => {
   const { name, email, password, role } = req.body;
   try {
@@ -17,14 +20,13 @@ router.post("/register", async (req, res) => {
     const user = new User({ name, email, password: hashedPassword, role });
     await user.save();
     res.status(201).json(user);
-    logger.info(
-      `New User registered with Name: ${user.name} and email: ${user.email}: Role: ${user.role}, `
-    );
+    logger.info(`New User registered with Name: ${user.name}, email: ${user.email}, Role: ${user.role}`);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
+// Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -36,31 +38,22 @@ router.post("/login", async (req, res) => {
       expiresIn: "1h",
     });
     res.json({ token, user });
-    logger.info(
-      `User logged in email: ${user.email} `
-    );
+    logger.info(`User logged in email: ${user.email}`);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
+// Register worker route
 router.post("/register-worker", upload.array("documents"), async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const documents = req.files.map((file) => file.buffer.toString("base64"));
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      role: "worker",
-      documents,
-    });
+    const user = new User({ name, email, password: hashedPassword, role: "worker", documents });
     await user.save();
     res.status(201).json(user);
-    logger.info(
-      `New User registered worker with Name: ${user.name} and email: ${user.email}: Role: ${user.role}, `
-    );
+    logger.info(`New worker registered with Name: ${user.name}, email: ${user.email}, Role: worker`);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

@@ -31,6 +31,8 @@ router.post(
       await serviceRequest.save();
       res.status(201).json(serviceRequest);
     } catch (err) {
+      console.error('Error:', err.message); // Log error messages
+
       res.status(500).json({ error: err.message });
     }
   }

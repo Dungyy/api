@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.js";
 import serviceRoutes from "./routes/services.js";
 import workerRoutes from "./routes/worker.js";
 import adminRoutes from "./routes/admin.js";
+import myRoutes from "./routes/myRoutes.js"
 import logger from "./logger.js";
 import { MONGO_URI } from "./global.js";
 
@@ -20,8 +21,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/workers", workerRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/me", myRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 mongoose
   .connect(MONGO_URI)
