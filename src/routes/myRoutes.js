@@ -1,106 +1,22 @@
 import express from "express";
-import User from "../models/User.js";
-import logger from "../logger.js";
 import { auth } from "../middleware/auth.js";
-import ServiceRequest from "../models/ServiceRequest.js";
+import { getUserProfile, getUserRequests, deleteUserRequest, editUserRequest, cancelUserProfile } from "../controllers/myRoutes.js";
 
 const router = express.Router();
 
 // Get current user profile
-router.get("/", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
+router.get("/", auth, getUserProfile);
 
 // Fetch service requests for the logged-in user
-router.get("/requests", auth, async (req, res) => {
-  try {
-    const serviceRequests = await ServiceRequest.find({ user: req.user.id });
-    res.json(serviceRequests);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
+router.get("/requests", auth, getUserRequests);
 
 // Delete a service request
-router.delete("/requests/:id", auth, async (req, res) => {
-  try {
-    const request = await ServiceRequest.findById(req.params.id);
-    if (!request) {
-      logger.debug(`Request with ID ${req.params.id} not found`); 
-      return res.status(404).json({ msg: "Service request not found" });
-    }
-
-    // Ensure the request belongs to the logged-in user
-    if (request.user.toString() !== req.user.id) {
-      logger.debug(`User not authorized to delete request: ${req.user.id}`); 
-      return res.status(401).json({ msg: "User not authorized" });
-    }
-
-    await request.deleteOne();
-    res.json({ msg: "Service request removed" });
-  } catch (err) {
-    logger.error(err);
-    res.status(500).json({ error: "Server error", details: err.message });
-  }
-});
+router.delete("/requests/:id", auth, deleteUserRequest);
 
 // Update (Edit) a service request
-router.put("/requests/:id", auth, async (req, res) => {
-  const { serviceType, date, time } = req.body;
-
-  try {
-    const request = await ServiceRequest.findById(req.params.id);
-    if (!request) {
-      logger.debug(`Request with ID ${req.params.id} not found`); 
-      return res.status(404).json({ msg: "Service request not found" });
-    }
-
-    // Ensure the request belongs to the logged-in user
-    if (request.user.toString() !== req.user.id) {
-      logger.debug(`User not authorized to update request: ${req.user.id}`); 
-      return res.status(401).json({ msg: "User not authorized" });
-    }
-
-    request.serviceType = serviceType || request.serviceType;
-    request.date = date || request.date;
-    request.time = time || request.time;
-
-    await request.save();
-    res.json(request);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
+router.put("/requests/:id", auth, editUserRequest);
 
 // Cancel a service request (soft delete or mark as canceled)
-router.put("/requests/:id/cancel", auth, async (req, res) => {
-  try {
-    const request = await ServiceRequest.findById(req.params.id);
-    if (!request) {
-      logger.debug(`Request with ID ${req.params.id} not found`); 
-      return res.status(404).json({ msg: "Service request not found" });
-    }
-
-    logger.debug(`User ${req.user.id} attempting to cancel request ${req.params.id}`); 
-
-    // Ensure the request belongs to the logged-in user
-    if (request.user.toString() !== req.user.id) {
-      logger.debug(`User not authorized to cancel request: ${req.user.id}`); 
-      return res.status(401).json({ msg: "User not authorized" });
-    }
-
-    request.status = "canceled"; // Add a canceled status
-    await request.save();
-    res.json(request);
-  } catch (err) {
-    logger.error(err);
-    res.status(500).json({ error: "Server error", details: err.message });
-  }
-});
+router.put("/requests/:id/cancel", auth, cancelUserProfile);
 
 export default router;

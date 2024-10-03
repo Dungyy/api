@@ -1,6 +1,6 @@
 import express from "express";
 import { check, validationResult } from "express-validator";
-import auth from "../middleware/auth.js";
+import { auth } from "../middleware/auth.js";
 import Review from "../models/Review.js";
 
 const router = express.Router();
@@ -10,7 +10,7 @@ router.post(
   [
     auth,
     [
-      check("rating", "Rating is required").isInt({ min: 1, max: 10 }),
+      check("rating", "Rating is required").isInt({ min: 1, max: 5 }),
       check("comment", "Comment is required").not().isEmpty(),
       check("serviceId", "Service ID is required").not().isEmpty(),
     ],

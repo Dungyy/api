@@ -1,3 +1,4 @@
+// src/routes/payments.js
 import express from "express";
 import stripePackage from "stripe";
 import { auth } from "../middleware/auth.js";

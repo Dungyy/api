@@ -15,7 +15,9 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+// Increase the body size limit for JSON and URL-encoded data
+app.use(express.json({ limit: '20mb' })); // Increase to 20 MB or adjust as needed
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/services", serviceRoutes);
@@ -37,7 +39,7 @@ mongoose
     app.listen(PORT, () => logger.info(`⚡ Server running on port ${PORT} in ${process.env.NODE_ENV} mode ⚡`));
   })
   .catch((err) => {
-    logger.error(`❌ Error connecting to MongoDB (${MONGO_URI}): ${err.message}`);
+    logger.error(`❌ Error connecting to MongoDB (${MONGO_URI}): ${err.message} ❌`);
     logger.debug(`Full MongoDB connection error: ${err.stack}`);
     process.exit(1);
   });

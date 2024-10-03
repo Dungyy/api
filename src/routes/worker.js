@@ -1,15 +1,17 @@
+// src/routes/worker.js
 import express from "express";
-import multer from "multer";
-import { RegisterWorker } from "../controllers/worker.js";
-// import { auth } from "../middleware/auth.js";
+import { auth, workerAuth } from "../middleware/auth.js";
+import { getJobs, acceptJob, completeJob } from "../controllers/worker.js";
 
 const router = express.Router();
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
-// Worker registration route
-router.post("/register", upload.array("documents"), RegisterWorker);
+// Fetch available jobs (workers only)
+router.get("/jobs", auth, workerAuth, getJobs);
 
-// Additional routes for workers can be added here, e.g., viewing service requests assigned to them
+// Worker accepts a job
+router.put("/jobs/:id/accept", auth, workerAuth, acceptJob);
+
+// Worker completes a job
+router.put("/jobs/:id/complete", auth, workerAuth, completeJob);
 
 export default router;
