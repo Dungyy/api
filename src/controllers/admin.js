@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import ServiceRequest from '../models/ServiceRequest.js';
-import logger from '../logger.js'; 
+import logger from '../logger.js';
 
 export const getUsers = async (req, res) => {
   logger.debug('Fetching all users');
@@ -75,11 +75,11 @@ export const getMyAccount = async (req, res) => {
 export const getCurrentUser = async (req, res) => {
   logger.debug(`Fetching profile for user ID: ${req.user.id}`);
   try {
-      const user = await User.findById(req.user.id).select("-password");
-      logger.info(`Fetched profile for user ID: ${req.user.id}`);
-      res.json(user);
+    const user = await User.findById(req.user.id).select("-password");
+    logger.info(`Fetched profile for user ID: ${req.user.id}`);
+    res.json(user);
   } catch (err) {
-      logger.error(`Error fetching profile for user ID ${req.user.id}: ${err.message}`);
-      res.status(500).json({ error: "Server error" });
+    logger.error(`Error fetching profile for user ID ${req.user.id}: ${err.message}`);
+    res.status(500).json({ error: "Server error" });
   }
 };

@@ -65,14 +65,14 @@ const serviceRequestSchema = new mongoose.Schema({
     enum: ["pending", "in_progress", "completed", "canceled"],
     default: "pending",
   },
+  address: {  
+    type: String,
+    required: true,
+  },
   contactInfo: {
     type: String, // Additional contact info
   },
-  worker: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to User model (Worker)
-    default: null,
-  },
+  messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
   createdAt: {
     type: Date,
     default: Date.now,

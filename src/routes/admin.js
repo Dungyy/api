@@ -15,6 +15,6 @@ router.get("/service-requests", auth, adminAuth, getServiceRequests);
 router.put("/promote/:id", auth, adminAuth, promoteUser);
 
 // Get current user profile
-router.get("/me", auth, getCurrentUser);
+router.get("/me", auth, adminAuth, getCurrentUser);
 
 export default router;

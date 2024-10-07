@@ -12,8 +12,8 @@ export const createServiceRequest = async (req, res) => {
 
   try {
     const newServiceRequest = new ServiceRequest({
-      customer: req.user.id,  // Customer making the request
-      customerName: req.user.name,  // Get the user's name from req.user
+      customer: req.user.id,
+      customerName: req.user.name, 
       serviceType,
       description,
       date,
