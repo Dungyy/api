@@ -6,12 +6,10 @@ export const MONGO_URI = process.env.MONGO_URI;
 export const JWT_SECRET = process.env.JWT_SECRET;
 
 export const IS_PROD = !(
-  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'development'
 );
 
-export const IS_DEV = process.env.NODE_ENV === 'development';
-
-export const PORT = IS_DEV ? 5000 : process.env.PORT;
+export const PORT = !IS_PROD ? 8000 : process.env.PORT;
 
 // Basic AI responses for now
 export const aiResponses = {
